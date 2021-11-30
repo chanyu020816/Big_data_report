@@ -121,7 +121,6 @@ if (alcohol_continent$alc_amount == "high") {
 }
 }
 quantile(alcohol_continent$alcconsumption, probs = seq(0, 1, 0.25), na.rm = TRUE, names = TRUE, type = 7)
-?ifelse()
 
 sample(c("go", "stay"), 5, replace = TRUE)
 mapdata <- map_data("world")

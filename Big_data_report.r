@@ -48,9 +48,14 @@ ggplot(alcohol_continent) +
  ) +
  coord_flip()
 
+#boxplot
+ggplot(alcohol_continent) +
+    geom_boxplot(mapping = aes(reorder(alcohol_continent$region, alcohol_continent$alcconsumption, mean, na.rm = TRUE), alcconsumption), na.rm = TRUE)
+
 ggplot(alcohol_continent, aes(region, alcconsumption)) +
     geom_point()
 
+#linear regression, alccon-suirate, by each continent
 ggplot(alcohol_continent, aes(alcconsumption, suicideper100th)) + 
     geom_point() +
     geom_smooth(method = "lm") +
@@ -66,8 +71,8 @@ ggplot(alcohol_continent, aes(x = alcconsumption, y = suicideper100th, color = r
 alcohol_asia <- alcohol_continent %>%
     filter(region == "Asia")
 heat_map(gapminder_alcohol)
-heat_map(alcohol_continent, "Continent")
-heat_map(alcohol_asia, "Asia")
+heat_map(alcohol_continent, "Continent") 
+heat_map(alcohol_asia, "Asia") 
 alcohol_americas <- sep_region(alcohol_continent, "Americas")
 heat_map(alcohol_americas, "Americas")
 alcohol_europe <- sep_region(alcohol_continent, "Europe")
@@ -99,7 +104,7 @@ ggplot(alcohol_continent, aes(alcconsumption, suicideper100th, col=region)) +
   geom_encircle(data = alc_Afi, aes(alcconsumption, suicideper100th)) + 
   geom_encircle(data = alc_Oce, aes(alcconsumption, suicideper100th))
 
-#problem
+#FIXME
 alcohol_continent$alc_amount <- ifelse(alcohol_continent$alcconsumption > 6.08, "high", "low")
 alcohol_continent$alc_amount <- ifelse(alcohol_continent$alcconsumption > 9.99, "large", FALSE)
 
@@ -108,7 +113,8 @@ alcohol_continent %>%
     count(alc_amount)
 boxplot(alcohol_continent$suicideper100th, alcohol_continent$employrate, alcohol_continent$employrate)
 ?boxplot()
-#problem
+
+#FIXME
 if (alcohol_continent$alc_amount == "high") {
   if(alcohol_continent$alcconsumption > 9.99){
     alcohol_continent$alc_amount = "large"
@@ -131,6 +137,19 @@ mapdata_final <- mapdata1 %>% filter(!is.na(mapdata1$alcconsumption))
 View(mapdata_final)
 ggplot(mapdata_final, aes(long, lat, group = group)) +
     geom_polygon(aes(fill = alcconsumption), color = "white", alpha = 2)
+
+# heat map function
+data_withoutna <- alcohol_continent %>% drop_na()
+alc_to_emp <- data_withoutna[, c(2:5)]
+cor_mat <- round(cor(alc_to_emp),2)
+cor_table <- melt(cor_mat, value.name = "correlation")
+rn_table <- cor_table %>%
+    rename(X = Var1,
+           Y = Var2)
+plot_n_title <- ggplot(data = rn_table, aes(x= X , y= Y , fill = correlation)) + 
+  geom_tile() +
+  facet_wrap(~ region)  
+
 
 covid <- read.csv("C:/Users/chenyu/Downloads/owid-covid-data.csv", header = TRUE)
 View(covid)

@@ -1,3 +1,4 @@
+# Packages------------------------------------------------
 library(ggplot2)
 library(tidyr)
 library(reshape2)
@@ -7,6 +8,7 @@ library(ggfortify)
 library(dplyr)
 library(sp)
 library(tmap)
+# DATA----------------------------------------------------
 gapminder_alcohol <- read.csv("C:/Users/chenyu/Downloads/gapminder_alcohol.csv", header = TRUE)
 country_to_continent <- read.csv("C:/Users/chenyu/Downloads/continents2.csv", header = TRUE, sep = ";")
 alcohol <- gapminder_alcohol %>%
@@ -14,7 +16,7 @@ alcohol <- gapminder_alcohol %>%
 alcohol_continent <- alcohol %>%
     group_by(region)
 View(alcohol_continent)
-# heat map function
+# heat map function---------------------------------------
 heat_map <- function(data, title = FALSE){
     data_withoutna <- data %>% drop_na()
 alc_to_emp <- data_withoutna[, c(2:5)]
@@ -32,7 +34,7 @@ plot_n_title +
 else {
     plot_n_title}
 }
-#continent separate function
+#continent separate function------------------------------=
 sep_region <- function(data, continent) {
     data %>%
         filter(region == continent)

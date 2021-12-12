@@ -8,9 +8,11 @@ library(ggfortify)
 library(dplyr)
 library(sp)
 library(tmap)
+library(tidytext)
 # DATA----------------------------------------------------
 gapminder_alcohol <- read.csv("C:/Users/chenyu/Downloads/gapminder_alcohol.csv", header = TRUE)
 country_to_continent <- read.csv("C:/Users/chenyu/Downloads/continents2.csv", header = TRUE, sep = ";")
+readLines("C:/Users/chenyu/Downloads/wordcount_target1.txt")
 alcohol <- gapminder_alcohol %>%
     inner_join(country_to_continent, by = c("country" = "name"))
 alcohol_continent <- alcohol %>%
@@ -152,6 +154,33 @@ plot_n_title <- ggplot(data = rn_table, aes(x= X , y= Y , fill = correlation)) +
   geom_tile() +
   facet_wrap(~ region)  
 
+word_count <- function(file, order = FALSE, desc = FALSE) {
+    text <- readLines(file)
+    TextTable <- data.frame(text)
+    df <- unnest_tokens(TextTable, input = text, output = Word, format = "text") %>%
+        count(Word)
+    if (order == "word" ) {
+        if (desc == TRUE) {
+            df %>%
+            arrange(desc(Word))
+        } else {
+            df %>%
+            arrange(Word)
+        }
+    } else if (order == "n") {
+        if (desc == TRUE) {
+            df %>%
+            arrange(desc(n))
+        } else {
+            df %>%
+            arrange(n)
+        }
+    }    
+}
+
+word_count("C:/Users/chenyu/Downloads/wordcount_target1.txt", order = "word")
+
+
 
 covid <- read.csv("C:/Users/chenyu/Downloads/owid-covid-data.csv", header = TRUE)
 View(covid)
@@ -161,3 +190,61 @@ covid_TW <- covid %>%
     filter(location == "Taiwan") %>%
     select(location, total_cases, people_vaccinated, people_fully_vaccinated, people_vaccinated_per_hundred, people_fully_vaccinated_per_hundred)
 View(covid_TW)
+
+##Final---------------------------------------------------------------------------------
+WordCount <- function(file, order = FALSE, desc = FALSE) {
+  text <- readLines(file, warn = FALSE)
+  TextTable <- data.frame(text)
+  df <- unnest_tokens(TextTable, input = text, output = Word, format = "text") %>%
+    count(Word)
+  if (order == "word" ) {
+    if (desc == TRUE) {
+      df %>%
+        arrange(desc(Word))
+    } else {
+      df %>%
+        arrange(Word)
+    }
+  } else if (order == "n") {
+    if (desc == TRUE) {
+      df %>%
+        arrange(desc(n))
+    } else {
+      df %>%
+        arrange(n)
+    }
+  } else {
+      df
+  }
+}
+write.table(WordCount("C:/Users/chenyu/Downloads/wordcount_target1.txt"), file = "C:/Users/chenyu/Desktop/result.csv", sep = ",", row.names = FALSE)
+
+#WordCount function code-----------------------------------------------
+WordCount <- function(file, order = FALSE, desc = FALSE) {
+  text <- readLines(file, warn = FALSE)
+  TextTable <- data.frame(text)
+  df <- unnest_tokens(TextTable, input = text, output = Word, format = "text") %>%
+    count(Word)
+  if (order == "word" ) {
+    if (desc == TRUE) {
+      df %>%
+        arrange(desc(Word))
+    } else {
+      df %>%
+        arrange(Word)
+    }
+  } else if (order == "n") {
+    if (desc == TRUE) {
+      df %>%
+        arrange(desc(n))
+    } else {
+      df %>%
+        arrange(n)
+    }
+  } else {
+    df
+  }
+}
+#result----------------------------------------------------------------
+write.table(WordCount("C:/Users/chenyu/Downloads/wordcount_target1.txt"), file = "C:/Users/chenyu/Desktop/result.csv", row.names = FALSE)
+
